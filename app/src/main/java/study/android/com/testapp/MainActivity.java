@@ -42,7 +42,7 @@ import study.android.com.testapp.data.response.Response;
 import study.android.com.testapp.data.services.LocationService;
 import study.android.com.testapp.ui.WeatherViewActivity;
 
-public class MainActivity extends AppCompatActivity implements Observer, LoaderManager.LoaderCallbacks<Response>, GeomeIsSelected {
+public class MainActivity extends AppCompatActivity implements Observer, LoaderManager.LoaderCallbacks<Response>, GeomeIsSelected, View.OnClickListener {
 
 
     private String TAG = "MainActivity";
@@ -68,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        rv = (RecyclerView) findViewById(R.id.rv);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rv.setLayoutManager(llm);
         final LocationFragment retainedWorkerFragment =
                 (LocationFragment) getFragmentManager().findFragmentByTag(TAG_LOCATION);
         final GeonamesFragment retainedGeonamesFragment =
@@ -78,23 +80,44 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         extractLocationFragment(retainedWorkerFragment);
         exstractdRetainedGeonamesFragment(retainedGeonamesFragment);
         extractWeatherFragment(retainedWeatherFragment);
-        updateClick.setOnClickListener(updateLocation());
+        updateClick.setOnClickListener(this);
 
     }
 
+    @Override
+    public void onClick(View v) {
+        Log.i(TAG, "----------------------Button Update Press-----------------------------" + "\n");
+        Log.i(TAG, "Updated Location");
+        final LocationFragment locationFragment =
+                (LocationFragment) getFragmentManager().findFragmentByTag(TAG_LOCATION);
+        final GeonamesFragment geonamesFragment =
+                (GeonamesFragment) getFragmentManager().findFragmentByTag(TAG_GEONAMES);
 
-    @NonNull
-    private View.OnClickListener updateLocation() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "----------------------Button Update Press-----------------------------" + "\n");
-                Log.i(TAG, "Updated Location");
+        if (locationFragment != null&&geonamesFragment!=null) {
+            getFragmentManager().beginTransaction()
+                    .remove(locationFragment)
+                    .commit();
+            getFragmentManager().beginTransaction()
+                    .remove(geonamesFragment)
+                    .commit();
+        }
 
-            }
-        };
+        final LocationFragment updateLocationFragment = new LocationFragment();
+        getFragmentManager().beginTransaction().add(updateLocationFragment, TAG_LOCATION).commit();
+
+        final GeonamesFragment udateGeonamesFragment = new GeonamesFragment();
+        getFragmentManager().beginTransaction().add(udateGeonamesFragment, TAG_GEONAMES).commit();
+
+        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        locationModel = updateLocationFragment.getLocationModel();
+        locationModel.registerObserver(this);
+        locationModel.startGetLocation(this, locationManager);
+        geonamesModel = udateGeonamesFragment.getGeonames();
+
+
+
+
     }
-
     private void extractLocationFragment(LocationFragment retainedWorkerFragment) {
         Log.i(TAG, "----------------------extractLocationFragment-----------------------------" + "\n");
         if (retainedWorkerFragment != null) {
@@ -119,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
     private void exstractdRetainedGeonamesFragment(GeonamesFragment retainedGeonamesFragment) {
         Log.i(TAG, "----------------------exstractdRetainedGeonamesFragment-----------------------------" + "\n");
-        rv = (RecyclerView) findViewById(R.id.rv);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        rv.setLayoutManager(llm);
+//        rv = (RecyclerView) findViewById(R.id.rv);
+//        LinearLayoutManager llm = new LinearLayoutManager(this);
+//        rv.setLayoutManager(llm);
         if (retainedGeonamesFragment != null) {
             geonamesModel = retainedGeonamesFragment.getGeonames();
             Log.i(TAG, "Geonames from GeonamesFragment gets!!");
@@ -281,10 +304,10 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
 
     private void initRVAdapter(List<Geoname> geonames) {
-
+        Log.i(TAG, "----------------------initRVAdapter-----------------------------");
         try {
-            Log.i(TAG, "\n" + "----------------------initRVAdapter-----------------------------");
-            RVAdapter adapter = new RVAdapter(MainActivity.this, geonames);
+
+            RVAdapter adapter = new RVAdapter(this, geonames);
             rv.setAdapter(adapter);
             showProgress(false);
         } catch (Exception e) {
@@ -390,26 +413,6 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
     }
 
-    private void back() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-    }
-
-//    public void refresh(View view) {
-//        onRestart();
-//    }
-//
-//    @Override
-//    protected void onRestart() {
-//
-//        // TODO Auto-generated method stub
-//        super.onRestart();
-//        Intent i = new Intent(MainActivity.this, MainActivity.class);
-//        startActivity(i);
-//        finish();
-//
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -431,4 +434,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

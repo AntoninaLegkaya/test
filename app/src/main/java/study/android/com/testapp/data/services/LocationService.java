@@ -28,7 +28,8 @@ public class LocationService {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
 
     //The minimum time beetwen updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+    private static final long MIN_TIME_BW_UPDATES =1;
+//            1000 * 60 * 1; // 1 minute
 
     private final static boolean forceNetwork = false;
     private static final int MY_PERMISSION_REQUEST_LOCATION_GET = 1;
@@ -159,11 +160,11 @@ public class LocationService {
         }
         if (provider != null) {
             locationManager.requestLocationUpdates(provider, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(4000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             if (locationManager != null) {
                 location = locationManager.getLastKnownLocation(provider);
                 if (location != null) {
