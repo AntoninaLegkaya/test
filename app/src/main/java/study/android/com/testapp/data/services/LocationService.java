@@ -32,7 +32,6 @@ public class LocationService {
 //            1000 * 60 * 1; // 1 minute
 
     private final static boolean forceNetwork = false;
-    private static final int MY_PERMISSION_REQUEST_LOCATION_GET = 1;
     public static int MY_PERMISSION_LOCATION = 1;
 
     public String TAG = "LocationService";
@@ -160,11 +159,11 @@ public class LocationService {
         }
         if (provider != null) {
             locationManager.requestLocationUpdates(provider, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, locationListener);
-//            try {
-//                Thread.sleep(4000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (locationManager != null) {
                 location = locationManager.getLastKnownLocation(provider);
                 if (location != null) {

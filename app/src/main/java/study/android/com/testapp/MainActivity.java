@@ -22,6 +22,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import study.android.com.testapp.data.adapters.RVAdapter;
 import study.android.com.testapp.data.interfaces.GeomeIsSelected;
 import study.android.com.testapp.data.interfaces.Observer;
@@ -42,7 +43,7 @@ import study.android.com.testapp.data.response.Response;
 import study.android.com.testapp.data.services.LocationService;
 import study.android.com.testapp.ui.WeatherViewActivity;
 
-public class MainActivity extends AppCompatActivity implements Observer, LoaderManager.LoaderCallbacks<Response>, GeomeIsSelected, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements Observer, LoaderManager.LoaderCallbacks<Response>, GeomeIsSelected {
 
 
     private String TAG = "MainActivity";
@@ -55,12 +56,28 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
     private Geonames geonamesModel;
     private String geoname;
     private String countryCode;
+    private LocationFragment retainedLocationFragment;
+    private GeonamesFragment retainedGeonamesFragment;
+    private WeatherFragment retainedWeatherFragment;
     private Loader<Geonames> loader;
+    @Bind(R.id.rv)
+    RecyclerView rv;
     @Bind(R.id.view_progress)
     View mProgress;
     @Bind(R.id.update)
     Button updateClick;
-    RecyclerView rv;
+
+    @OnClick(R.id.update)
+    public void submit(View view) {
+        Log.i(TAG, "----------------------Button Update Press-----------------------------" + "\n");
+        Log.i(TAG, "Updated Location");
+
+        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        locationModel = retainedLocationFragment.getLocationModel();
+        locationModel.startGetLocation(this, locationManager);
+        geonamesModel = retainedGeonamesFragment.getGeonames();
+
+    }
 
 
     @Override
@@ -68,70 +85,36 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        rv = (RecyclerView) findViewById(R.id.rv);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        rv.setLayoutManager(llm);
-        final LocationFragment retainedWorkerFragment =
+
+        Log.i(TAG, "----------------------onCreate MainActivity----------------------------" + "\n");
+        retainedLocationFragment =
                 (LocationFragment) getFragmentManager().findFragmentByTag(TAG_LOCATION);
-        final GeonamesFragment retainedGeonamesFragment =
+        retainedGeonamesFragment =
                 (GeonamesFragment) getFragmentManager().findFragmentByTag(TAG_GEONAMES);
-        final WeatherFragment retainedWeatherFragment =
+        retainedWeatherFragment =
                 (WeatherFragment) getFragmentManager().findFragmentByTag(TAG_WEATHER_MAIN);
-        extractLocationFragment(retainedWorkerFragment);
-        exstractdRetainedGeonamesFragment(retainedGeonamesFragment);
-        extractWeatherFragment(retainedWeatherFragment);
-        updateClick.setOnClickListener(this);
-
-    }
-
-    @Override
-    public void onClick(View v) {
-        Log.i(TAG, "----------------------Button Update Press-----------------------------" + "\n");
-        Log.i(TAG, "Updated Location");
-        final LocationFragment locationFragment =
-                (LocationFragment) getFragmentManager().findFragmentByTag(TAG_LOCATION);
-        final GeonamesFragment geonamesFragment =
-                (GeonamesFragment) getFragmentManager().findFragmentByTag(TAG_GEONAMES);
-
-        if (locationFragment != null&&geonamesFragment!=null) {
-            getFragmentManager().beginTransaction()
-                    .remove(locationFragment)
-                    .commit();
-            getFragmentManager().beginTransaction()
-                    .remove(geonamesFragment)
-                    .commit();
-        }
-
-        final LocationFragment updateLocationFragment = new LocationFragment();
-        getFragmentManager().beginTransaction().add(updateLocationFragment, TAG_LOCATION).commit();
-
-        final GeonamesFragment udateGeonamesFragment = new GeonamesFragment();
-        getFragmentManager().beginTransaction().add(udateGeonamesFragment, TAG_GEONAMES).commit();
-
-        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
-        locationModel = updateLocationFragment.getLocationModel();
-        locationModel.registerObserver(this);
-        locationModel.startGetLocation(this, locationManager);
-        geonamesModel = udateGeonamesFragment.getGeonames();
-
-
+        extractLocationFragment();
+        exstractdRetainedGeonamesFragment();
+        extractWeatherFragment();
 
 
     }
-    private void extractLocationFragment(LocationFragment retainedWorkerFragment) {
+
+
+    private void extractLocationFragment() {
         Log.i(TAG, "----------------------extractLocationFragment-----------------------------" + "\n");
-        if (retainedWorkerFragment != null) {
-            locationModel = retainedWorkerFragment.getLocationModel();
+        if (retainedLocationFragment != null) {
+            locationModel = retainedLocationFragment.getLocationModel();
             locationModel.registerObserver(this);
             Log.i(TAG, "Location from LocationFragment gets!!");
         } else {
-            final LocationFragment workerFragment = new LocationFragment();
+            retainedLocationFragment = new LocationFragment();
             getFragmentManager().beginTransaction()
-                    .add(workerFragment, TAG_LOCATION)
+                    .add(retainedLocationFragment, TAG_LOCATION)
                     .commit();
             locationManager = (LocationManager) this
                     .getSystemService(this.LOCATION_SERVICE);
-            locationModel = workerFragment.getLocationModel();
+            locationModel = retainedLocationFragment.getLocationModel();
             locationModel.registerObserver(this);
             locationModel.startGetLocation(this, locationManager);
 
@@ -140,11 +123,9 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         Log.i(TAG, "\n" + "---------------------------------------------------------");
     }
 
-    private void exstractdRetainedGeonamesFragment(GeonamesFragment retainedGeonamesFragment) {
-        Log.i(TAG, "----------------------exstractdRetainedGeonamesFragment-----------------------------" + "\n");
-//        rv = (RecyclerView) findViewById(R.id.rv);
-//        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        rv.setLayoutManager(llm);
+    private void exstractdRetainedGeonamesFragment() {
+        Log.i(TAG, "----------------------exstractdGeonamesFragment-----------------------------" + "\n");
+
         if (retainedGeonamesFragment != null) {
             geonamesModel = retainedGeonamesFragment.getGeonames();
             Log.i(TAG, "Geonames from GeonamesFragment gets!!");
@@ -157,18 +138,18 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
             }
 
         } else {
-            final GeonamesFragment workerFragment = new GeonamesFragment();
+            retainedGeonamesFragment = new GeonamesFragment();
             getFragmentManager().beginTransaction()
-                    .add(workerFragment, TAG_GEONAMES)
+                    .add(retainedGeonamesFragment, TAG_GEONAMES)
                     .commit();
-            geonamesModel = workerFragment.getGeonames();
+            geonamesModel = retainedGeonamesFragment.getGeonames();
 
         }
         Log.i(TAG, "\n" + "-----------------------------------------------------------------------");
     }
 
-    private void extractWeatherFragment(WeatherFragment retainedWeatherFragment) {
-        Log.i(TAG, "----------------------exstractdRetainedWeatherFragmentt-----------------------------" + "\n");
+    private void extractWeatherFragment() {
+        Log.i(TAG, "----------------------exstractdWeatherFragmentt-----------------------------" + "\n");
         if (retainedWeatherFragment != null) {
             weatherModel = retainedWeatherFragment.getWeatherModel();
             Log.i(TAG, "Weather from WeatherFragmentView gets!!");
@@ -179,11 +160,11 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
             }
 
         } else {
-            final WeatherFragment workerFragment = new WeatherFragment();
+            retainedWeatherFragment = new WeatherFragment();
             getFragmentManager().beginTransaction()
-                    .add(workerFragment, TAG_WEATHER_MAIN)
+                    .add(retainedWeatherFragment, TAG_WEATHER_MAIN)
                     .commit();
-            weatherModel = workerFragment.getWeatherModel();
+            weatherModel = retainedWeatherFragment.getWeatherModel();
 
         }
         Log.i(TAG, "\n" + "-----------------------------------------------------------------------");
@@ -306,7 +287,8 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
     private void initRVAdapter(List<Geoname> geonames) {
         Log.i(TAG, "----------------------initRVAdapter-----------------------------");
         try {
-
+            LinearLayoutManager llm = new LinearLayoutManager(this);
+            rv.setLayoutManager(llm);
             RVAdapter adapter = new RVAdapter(this, geonames);
             rv.setAdapter(adapter);
             showProgress(false);
@@ -434,7 +416,6 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
         return super.onOptionsItemSelected(item);
     }
-
 
 
 }
