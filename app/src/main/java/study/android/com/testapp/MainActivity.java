@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
     private LocationFragment retainedLocationFragment;
     private GeonamesFragment retainedGeonamesFragment;
     private WeatherFragment retainedWeatherFragment;
-    private Loader<Geonames> loader;
     @Bind(R.id.rv)
     RecyclerView rv;
     @Bind(R.id.view_progress)
@@ -85,8 +84,9 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        Log.i(TAG, "*********************************onCreate***************************");
         Log.i(TAG, "----------------------onCreate MainActivity----------------------------" + "\n");
+        getLoaderManager().initLoader(R.id.weather_loader, Bundle.EMPTY, this);
         retainedLocationFragment =
                 (LocationFragment) getFragmentManager().findFragmentByTag(TAG_LOCATION);
         retainedGeonamesFragment =
@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         extractLocationFragment();
         exstractdRetainedGeonamesFragment();
         extractWeatherFragment();
+
 
 
     }
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 initRVAdapter(geonamesModel.getGeonames());
 
             } else {
-                Log.e(TAG, "Geonames Fragment is empry");
+                Log.e(TAG, "Geonames Fragment is empty");
             }
 
         } else {
@@ -172,8 +173,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
     @Override
     public Loader<Response> onCreateLoader(int id, Bundle args) {
-        Log.i(TAG, "-----------------------onCreateLoader----------------");
-        Log.i(TAG, "onCreateLoader: create loader by id: " + id);
+        Log.i(TAG, "-----------------------onCreateLoader----id: " + id);
         switch (id) {
             case R.id.cities_loader:
                 if (locationModel != null) {
@@ -187,16 +187,13 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 }
 
             case R.id.weather_loader:
+
+                Log.i(TAG, "Get weather loader by id: " + id);
                 return getWeatherLoader(geoname, countryCode);
 
-
-            case R.id.airports_loader:
-//                String coordinats = String.valueOf(locationManager.latitude) + "," + String.valueOf(locationManager.longitude);
-//                Log.i("Main", "airports_loader: coordinats : " + coordinats);
-//                return new AirportsLoader(this, coordinats);
-
-
             default:
+
+                Log.i(TAG, "Could not create loader by id: " + id);
                 return null;
         }
     }
@@ -265,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 Toast.makeText(this, "Couldn't get weather information", Toast.LENGTH_SHORT).show();
 
             }
+            showProgress(false);
 
         }
         if (id == R.id.airports_loader) {
@@ -279,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 }
             }
         }
-
+        Log.i(TAG, "-----------------------DestroyLoader-----id: " + id);
         getLoaderManager().destroyLoader(id);
     }
 
@@ -300,8 +298,8 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
     @Override
     public void onLoaderReset(Loader<Response> loader) {
-        loader = null;
-        Log.i(TAG, "Loader Reset");
+
+        Log.i(TAG, "*********************************onLoaderReset***************************");
 
     }
 
@@ -328,10 +326,12 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
     @Override
     public void getDataToRequest(String geoname, String countryCode) {
         Log.i(TAG, "----------------------Request weatherData for " + geoname + " -----------------------------");
-//        showProgress(true);
+        showProgress(true);
         this.geoname = geoname;
         this.countryCode = countryCode;
-        getLoaderManager().initLoader(R.id.weather_loader, Bundle.EMPTY, this);
+        getLoaderManager().restartLoader(R.id.weather_loader, Bundle.EMPTY, this);
+
+
     }
 
 
@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         showProgress(false);
         locationModel.stopGetLocation();
         Toast.makeText(this, "Location gets", Toast.LENGTH_SHORT).show();
-        getLoaderManager().initLoader(R.id.cities_loader, Bundle.EMPTY, this);
+        getLoaderManager().restartLoader(R.id.cities_loader, Bundle.EMPTY, this);
 
     }
 
@@ -360,14 +360,14 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
     @Override
     public void onResume() {
-//        Log.i(TAG, "onResume");
+        Log.i(TAG, "*********************************onResume***************************");
         super.onResume();
 
     }
 
     @Override
     protected void onDestroy() {
-//        Log.i(TAG, "onDestroy");
+        Log.i(TAG, "*********************************onDestroy***************************");
         super.onDestroy();
         locationModel.unregisterObserver(this);
 
@@ -384,13 +384,13 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
     @Override
     public void onStart() {
-//        Log.i(TAG, "onStart");
+        Log.i(TAG, "*********************************onStart***************************");
         super.onStart();
     }
 
     @Override
     public void onStop() {
-//        Log.i(TAG, "onStop");
+        Log.i(TAG, "*********************************onStop***************************");
         super.onStop();
 
     }

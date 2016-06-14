@@ -18,19 +18,21 @@ import study.android.com.testapp.data.services.ApiFactory;
  * Created by tony on 29.03.16.
  */
 public class WeatherLoader extends BaseLoader {
-
+    private String TAG = "WeatherLoader";
     private final String mCity;
     private final String mAK;
     private final Context mContext;
     public WeatherLoader(Context context, String city,String ak) {
+
         super(context);
+        Log.i(TAG, "-----------------WeatherLoader constructor--------------------");
         mCity = city;
         mAK = ak;
         mContext = context;
     }
     @Override
     protected Response apiCall() throws IOException {
-        Log.i("Main", "Call weather API");
+        Log.i(TAG, "-----------------Call weather API--------------------");
         APIService service = ApiFactory.getWeatherAPIInstance();
         Call<Weather> call = service.getWhether(getAPIServiceURL(mCity,mAK));
         Weather weather = call.execute().body();
@@ -49,4 +51,16 @@ public class WeatherLoader extends BaseLoader {
 
         return URLQuery;
     }
+
+    @Override
+    protected void onSuccess() {
+        Log.i(TAG, "WeatherLoader: Data are loaded ");
+    }
+
+    @Override
+    protected void onError() {
+        Log.i(TAG, "WeatherLoader: Data not loaded ");
+    }
+
+
 }
