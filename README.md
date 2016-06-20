@@ -1,10 +1,10 @@
 # Test Application
-  DESRIPTION: 
+  DESCRIPTION: 
   
-  Simple application, provide user information about cities aroung location square, and represent weather information for each of them. The main  purpose  of this application is  practical use of technology as a material being studied.
+  Simple application, provide user information about cities around location square, and represent weather information for each of them. The main  purpose  of this application is  practical use of technology as a material being studied.
   
 ### *Responsibilities*
-- Apllication must implement work with such frameworks as ButterKnife, Retrofit 2.0
+- Application must implement work with such frameworks as ButterKnife, Retrofit 2.0
 - Implement Loaders hierarchy.
 - Handling event change screen orientation
 -  Provide information about cities around coordinates square, used android.support.v7.widget.RecyclerView
@@ -12,10 +12,10 @@
 -  Implement work with BD, Handling event lack of network.
 
 ### *Example*
-- Get weather information for each city from service [query.yahooapis.com/v1/public][yahoo]
+- Get weather information for each city from service [/developer.yahoo.com][yahoo]
 - Get cities list (for the resulting location ) from service [api.geonames.org][geonames]
 
-[yahoo]:<https://query.yahooapis.com/v1/public>
+[yahoo]:<https://developer.yahoo.com/yql/>
 [geonames]:<http://api.geonames.org>
 
 ### *Useful links*
