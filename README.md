@@ -1,16 +1,41 @@
-Please fill this document with
-  - Project description
-  - Use cases
-  - Examples
-  - etc.
+# Test Application
+  DESCRIPTION: 
+  
+  Simple application, provide user information about cities around location square, and represent weather information for each of them. The main  purpose  of this application is  practical use of technology as a material being studied.
+  
+### *Responsibilities*
+- Application must implement work with such frameworks as ButterKnife, Retrofit 2.0
+- Implement Loaders hierarchy.
+- Handling event change screen orientation
+-  Provide information about cities around coordinates square, used android.support.v7.widget.RecyclerView
+-  Implement possibility update information, if changing location (Update button)
+-  Implement work with BD, Handling event lack of network.
 
-Useful links:
-   - [Почитать на русском языке]
-   - [GitHub article]
-   - [Online editor][dillinger]
+### *Example*
+- Get weather information for each city from service [/developer.yahoo.com][yahoo]
+- Get cities list (for the resulting location ) from service [api.geonames.org][geonames]
 
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen.
+[yahoo]:<https://developer.yahoo.com/yql/>
+[geonames]:<http://api.geonames.org>
 
-   [Почитать на русском языке]: <https://github.com/OlgaVlasova/markdown-doc/blob/master/README.md>
-   [GitHub article]: <https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/>
-   [dillinger]: <http://dillinger.io/>
+### *Useful links*
+- Link javadoc Loaders: 
+   - [/wiki/Loaders][loaders] 
+   - [/guide/components/loaders.html][loader]
+- Link  javadoc butterknife:  [/jakewharton.github.io/butterknife][butterknife]
+- Link javadoc retrofit: [/square.github.io/retrofit][retrofit]
+- Example using  weather webservice: [/developer.yahoo.com][weather]
+- Example using geonames webservice:  [/www.geonames.org][geonames]
+
+[loaders]:<https://github.com/ArtemMikhaylov/my_android_notes/wiki/Loaders>
+[loader]:<https://developer.android.com/guide/components/loaders.html>
+[butterknife]:<http://jakewharton.github.io/butterknife/>
+[retrofit]:<http://square.github.io/retrofit/>
+[weather]:<https://developer.yahoo.com/yql/>
+[geonames]:<http://www.geonames.org/export/JSONwebservices.html#citiesJSON>
+
+
+
+
+
+
