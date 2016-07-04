@@ -4,6 +4,7 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import study.android.com.testapp.data.adapters.RVAdapter;
+import study.android.com.testapp.data.database.tables.GeonamesTable;
 import study.android.com.testapp.data.interfaces.GeomeIsSelected;
 import study.android.com.testapp.data.interfaces.Observer;
 import study.android.com.testapp.data.loaders.custom.GeonamesLoader;
@@ -215,6 +217,27 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 Log.e(TAG, "Geoname loader is empty");
                 Toast.makeText(this, "Couldn't get cities information", Toast.LENGTH_SHORT).show();
             }
+
+            Cursor cursor = this.getContentResolver().query(GeonamesTable.URI,
+                    null, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    Log.i(TAG,  cursor.getCount() + "  rows");
+                    StringBuilder sb = new StringBuilder();
+                    do {
+                        sb.setLength(0);
+                        for (String cn : cursor.getColumnNames()) {
+                            sb.append(cn + " : "
+                                    + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
+                        }
+                        Log.i(TAG, sb.toString());
+                    } while (cursor.moveToNext());
+                }
+            } else{
+
+                Log.i(TAG, "DB is empty");
+            }
+
             Log.i(TAG, "\n" + "----------------------------------------------------------------");
         }
 

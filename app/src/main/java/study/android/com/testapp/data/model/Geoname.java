@@ -45,6 +45,12 @@ public class Geoname {
     @Expose
     private String fcode;
 
+    public Geoname(String name, String country_code, String population) {
+        this.name=name;
+        this.countrycode=country_code;
+        this.population=Integer.parseInt(population);
+    }
+
     /**
      * 
      * @return
