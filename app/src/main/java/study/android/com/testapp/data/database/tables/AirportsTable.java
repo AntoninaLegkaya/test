@@ -15,7 +15,7 @@ import study.android.com.testapp.data.model.Airport;
 
 public class AirportsTable {
 
-    public static final Uri URI = SqliteHelper.BASE_CONTENT_URI.buildUpon().appendPath(Requests.TABLE_NAME).build();
+    public static final Uri URI = SqliteGeonameHelper.BASE_CONTENT_URI.buildUpon().appendPath(Requests.TABLE_NAME).build();
 
     public static void save(Context context, @NonNull Airport airport) {
         context.getContentResolver().insert(URI, toContentValues(airport));

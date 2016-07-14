@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -11,24 +12,31 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by tony on 29.06.16.
  */
-public class GeonamesContentProvider extends ContentProvider {
+public class CustomContentProvider extends ContentProvider {
     private static final int GEONAMES_TABLE = 1;
-    private static String TAG = "GeonamesContentProvider";
+    private static final int WEATHER_TABLE = 2;
+    private static String TAG = "CustomContentProvider";
     private static final UriMatcher URI_MATCHER;
+    private SQLiteDatabase database;
 
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-        URI_MATCHER.addURI(SqliteHelper.CONTENT_AUTHORITY, GeonamesTable.Requests.TABLE_NAME, GEONAMES_TABLE);
+        URI_MATCHER.addURI(SqliteGeonameHelper.CONTENT_AUTHORITY, GeonamesTable.Requests.TABLE_NAME, GEONAMES_TABLE);
+        URI_MATCHER.addURI(SqliteWeatherHelper.CONTENT_AUTHORITY, WeatherTable.Requests.TABLE_NAME, WEATHER_TABLE);
     }
 
-    private SqliteHelper mSqliteHelper;
+    private SqliteGeonameHelper sqliteGeonameHelper;
+    private SqliteWeatherHelper sqliteWeatherHelper;
 
     @Override
     public boolean onCreate() {
-        mSqliteHelper = new SqliteHelper(getContext());
+        sqliteGeonameHelper = new SqliteGeonameHelper(getContext());
+        sqliteWeatherHelper = new SqliteWeatherHelper(getContext());
         return true;
     }
 
@@ -37,18 +45,29 @@ public class GeonamesContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         switch (URI_MATCHER.match(uri)) {
             case GEONAMES_TABLE:
+                database = sqliteGeonameHelper.getWritableDatabase();
                 return GeonamesTable.Requests.TABLE_NAME;
+            case WEATHER_TABLE:
+                database = sqliteWeatherHelper.getWritableDatabase();
+                return WeatherTable.Requests.TABLE_NAME;
             default:
                 return "";
         }
+    }
+
+    @Nullable
+    @Override
+    public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
+        return super.openAssetFile(uri, mode);
     }
 
     @Override
     @NonNull
     public Cursor query(@NonNull Uri uri, String[] projection,
                         String selection, String[] selectionArgs, String sortOrder) {
-        SQLiteDatabase database = mSqliteHelper.getWritableDatabase();
         String table = getType(uri);
+
+
         if (TextUtils.isEmpty(table)) {
             throw new UnsupportedOperationException("No such table to query");
         } else {
@@ -65,7 +84,6 @@ public class GeonamesContentProvider extends ContentProvider {
     @Override
     @NonNull
     public Uri insert(@NonNull Uri uri, @NonNull ContentValues values) {
-        SQLiteDatabase database = mSqliteHelper.getWritableDatabase();
         String table = getType(uri);
         if (TextUtils.isEmpty(table)) {
             throw new UnsupportedOperationException("No such table to query");
@@ -77,7 +95,7 @@ public class GeonamesContentProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
-        SQLiteDatabase database = mSqliteHelper.getWritableDatabase();
+
         String table = getType(uri);
         if (TextUtils.isEmpty(table)) {
             throw new UnsupportedOperationException("No such table to query");
@@ -101,7 +119,6 @@ public class GeonamesContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        SQLiteDatabase database = mSqliteHelper.getWritableDatabase();
         String table = getType(uri);
         if (TextUtils.isEmpty(table)) {
             throw new UnsupportedOperationException("No such table to query");
@@ -113,7 +130,6 @@ public class GeonamesContentProvider extends ContentProvider {
     @Override
     public int update(@NonNull Uri uri, @NonNull ContentValues values,
                       String selection, String[] selectionArgs) {
-        SQLiteDatabase database = mSqliteHelper.getWritableDatabase();
         String table = getType(uri);
         if (TextUtils.isEmpty(table)) {
             throw new UnsupportedOperationException("No such table to query");

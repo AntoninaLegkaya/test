@@ -10,7 +10,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import study.android.com.testapp.data.model.Airport;
 import study.android.com.testapp.data.model.Geoname;
 
 /**
@@ -18,7 +17,7 @@ import study.android.com.testapp.data.model.Geoname;
  */
 public class GeonamesTable {
     private static String TAG = "GeonamesTable";
-    public static final Uri URI = SqliteHelper.BASE_CONTENT_URI.buildUpon().appendPath(Requests.TABLE_NAME).build();
+    public static final Uri URI = SqliteGeonameHelper.BASE_CONTENT_URI.buildUpon().appendPath(Requests.TABLE_NAME).build();
 
 
     public static void save(Context context, @NonNull Geoname geoname

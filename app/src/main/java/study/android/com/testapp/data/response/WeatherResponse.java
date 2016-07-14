@@ -1,11 +1,13 @@
 package study.android.com.testapp.data.response;
 
 import android.content.Context;
-import android.util.Log;
 
-import java.util.List;
 
+import study.android.com.testapp.data.database.tables.WeatherTable;
+import study.android.com.testapp.data.model.Channel;
+import study.android.com.testapp.data.model.Query;
 import study.android.com.testapp.data.model.Weather;
+import study.android.com.testapp.data.model.WeatherModel;
 
 
 /**
@@ -14,24 +16,47 @@ import study.android.com.testapp.data.model.Weather;
 public class WeatherResponse extends Response {
 
     @Override
-    public void save(Context contextt) {
+    public void save(Context context) {
         Weather weather = getTypedAnswer();
         if (weather != null) {
+            Query query = weather.getQuery();
+            if (query != null) {
+                if (query.getResults() != null) {
+                    Channel channel = query.getResults().getChannel();
+                    if (channel != null) {
+                        String temp = channel.getItem().getCondition().getTemp();
+                        String geoname = channel.getLocation().getCity();
+                        String condition = channel.getItem().getCondition().getText();
+                        String dataInf = channel.getItem().getCondition().getDate();
+                        WeatherModel weatherModel = new WeatherModel(geoname, dataInf, condition, temp);
+                        WeatherTable.save(context, weatherModel);
 
-//                Query query = weather.getQuery();
-//                Channel channel = query.getResults().getChannel();
-//                if (channel != null) {
-//                    String temp = channel.getItem().getCondition().getTemp();
-//                    Log.i("Main", "WeatherResponse: temprecher: " + temp);
-//                    tempView.setText(temp);
-//                    dateView.setText(channel.getItem().getCondition().getDate());
-//                    cityView.setText(channel.getLocation().getCity());
-//                    condView.setText(channel.getItem().getCondition().getText());
-//                }
+                    } else
+
+                    {
 
 
-//            AirportsTable.save(context, airports);
+                    }
+                } else
+
+                {
+
+
+                }
+            } else
+
+            {
+
+
+            }
+
+
+        } else {
+
+
         }
 
     }
+
 }
+

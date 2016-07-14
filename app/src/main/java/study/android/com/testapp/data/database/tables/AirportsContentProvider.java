@@ -21,14 +21,14 @@ public class AirportsContentProvider extends ContentProvider {
 
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-        URI_MATCHER.addURI(SqliteHelper.CONTENT_AUTHORITY, AirportsTable.Requests.TABLE_NAME, AIRPORTS_TABLE);
+        URI_MATCHER.addURI(SqliteGeonameHelper.CONTENT_AUTHORITY, AirportsTable.Requests.TABLE_NAME, AIRPORTS_TABLE);
     }
 
-    private SqliteHelper mSqliteHelper;
+    private SqliteGeonameHelper mSqliteHelper;
 
     @Override
     public boolean onCreate() {
-        mSqliteHelper = new SqliteHelper(getContext());
+        mSqliteHelper = new SqliteGeonameHelper(getContext());
         return true;
     }
 

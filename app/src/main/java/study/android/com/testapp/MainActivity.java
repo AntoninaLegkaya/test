@@ -26,6 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import study.android.com.testapp.data.adapters.RVAdapter;
 import study.android.com.testapp.data.database.tables.GeonamesTable;
+import study.android.com.testapp.data.database.tables.WeatherTable;
 import study.android.com.testapp.data.interfaces.GeomeIsSelected;
 import study.android.com.testapp.data.interfaces.Observer;
 import study.android.com.testapp.data.loaders.custom.GeonamesLoader;
@@ -98,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         extractLocationFragment();
         exstractdRetainedGeonamesFragment();
         extractWeatherFragment();
-
 
 
     }
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                     null, null, null, null);
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    Log.i(TAG,  cursor.getCount() + "  rows");
+                    Log.i(TAG, cursor.getCount() + "  rows");
                     StringBuilder sb = new StringBuilder();
                     do {
                         sb.setLength(0);
@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                         Log.i(TAG, sb.toString());
                     } while (cursor.moveToNext());
                 }
-            } else{
+            } else {
 
                 Log.i(TAG, "DB is empty");
             }
@@ -257,9 +257,32 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                             weatherModel = new WeatherModel(geoname, dataInf, condition, temp);
 //                            Log.i(TAG, "Weather temprature: " + temp);
                             showProgress(false);
+
+                            Log.i(TAG, "----------------------Weather data from DB-----------------------------");
+
+                            Cursor cursor = this.getContentResolver().query(WeatherTable.URI,
+                                    null, null, null, null);
+                            if (cursor != null) {
+                                if (cursor.moveToFirst()) {
+                                    Log.i(TAG, cursor.getCount() + "  rows");
+                                    StringBuilder sb = new StringBuilder();
+                                    do {
+                                        sb.setLength(0);
+                                        for (String cn : cursor.getColumnNames()) {
+                                            sb.append(cn + " : "
+                                                    + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
+                                        }
+                                        Log.i(TAG, sb.toString());
+                                    } while (cursor.moveToNext());
+                                }
+                            } else {
+
+                                Log.i(TAG, "DB is empty");
+                            }
                             Intent intent = new Intent(this, WeatherViewActivity.class);
                             intent.putExtra(WeatherViewActivity.EXTRA_WEATHER, weatherModel);
                             startActivity(intent);
+
 
                         } else
 

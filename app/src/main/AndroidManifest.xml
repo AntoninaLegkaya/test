@@ -34,8 +34,9 @@
         <provider
             android:authorities="study.android.com.testapp"
             android:exported="false"
-            android:name=".data.database.tables.GeonamesContentProvider"
-            android:label="GeonamesProvider"/>
+            android:name=".data.database.tables.CustomContentProvider"
+            android:label="CustomProvider"/>
+
     </application>
 
 </manifest>
