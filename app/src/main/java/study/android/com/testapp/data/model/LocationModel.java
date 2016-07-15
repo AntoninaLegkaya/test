@@ -149,7 +149,7 @@ public class LocationModel {
 
             } else {
                 Log.e(TAG, "Could not get location: Provider is null " + "\n" + " -----------------------------------------");
-                mObservable.notifyFailed();
+                mObservable.notifyFailedProvider();
             }
         }
 

@@ -1,9 +1,11 @@
 package study.android.com.testapp.data.loaders.custom;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.List;
 
 
 import retrofit.Call;
@@ -17,8 +19,8 @@ import study.android.com.testapp.data.services.ApiFactory;
 /**
  * Created by tony on 31.03.16.
  */
-public class GeonamesLoader extends  BaseLoader {
-    private String TAG="GeonamesLoader";
+public class GeonamesLoader extends BaseLoader {
+    private String TAG = "GeonamesLoader";
     private final double mEast;
     private final double mWest;
     private final double mNorth;
@@ -26,6 +28,7 @@ public class GeonamesLoader extends  BaseLoader {
     private final String mLang;
     private final String mUsername;
     private final Context mContext;
+
     public GeonamesLoader(Context context, double mEast, double mWest, double mNorth, double mSouth, String mLang, String mUsername) {
 
         super(context);
@@ -38,11 +41,13 @@ public class GeonamesLoader extends  BaseLoader {
         this.mLang = mLang;
         this.mUsername = mUsername;
     }
+
+
     @Override
     protected Response apiCall() throws IOException {
         Log.i("TAG", "Call Geonames API");
         APIService service = ApiFactory.getGeonameAPIInstance();
-        Call<Geonames>call = service.getCities(mNorth,mSouth,mEast,mWest,mLang,mUsername);
+        Call<Geonames> call = service.getCities(mNorth, mSouth, mEast, mWest, mLang, mUsername);
         // deserialize the JSON response to the cities objects.
         Geonames result = call.execute().body();
         return new GeonameResponse()
@@ -54,7 +59,7 @@ public class GeonamesLoader extends  BaseLoader {
     @Override
     protected void onAbandon() {
         super.onAbandon();
-        Log.i(TAG,"Geoname Loader Abandon");
+        Log.i(TAG, "Geoname Loader Abandon");
     }
 
     @Override

@@ -218,25 +218,6 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 Toast.makeText(this, "Couldn't get cities information", Toast.LENGTH_SHORT).show();
             }
 
-            Cursor cursor = this.getContentResolver().query(GeonamesTable.URI,
-                    null, null, null, null);
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    Log.i(TAG, cursor.getCount() + "  rows");
-                    StringBuilder sb = new StringBuilder();
-                    do {
-                        sb.setLength(0);
-                        for (String cn : cursor.getColumnNames()) {
-                            sb.append(cn + " : "
-                                    + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
-                        }
-                        Log.i(TAG, sb.toString());
-                    } while (cursor.moveToNext());
-                }
-            } else {
-
-                Log.i(TAG, "DB is empty");
-            }
 
             Log.i(TAG, "\n" + "----------------------------------------------------------------");
         }
@@ -396,6 +377,45 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
         Log.i(TAG, "onLocationFailed");
         showProgress(false);
         Toast.makeText(this, "Could not get location. Start task again!", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onFailedProvider(Object model) {
+
+        Toast.makeText(this, "Provider absent", Toast.LENGTH_SHORT).show();
+        Cursor cursor = this.getContentResolver().query(GeonamesTable.URI,
+                null, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                Log.i(TAG, cursor.getCount() + "  rows");
+                StringBuilder sb = new StringBuilder();
+                do {
+                    sb.setLength(0);
+                    for (String cn : cursor.getColumnNames()) {
+                        sb.append(cn + " : "
+                                + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
+                    }
+                    Log.i(TAG, sb.toString());
+                } while (cursor.moveToNext());
+            }
+
+            List<Geoname> geonames = GeonamesTable.listFromCursor(cursor);
+            if (geonames != null) {
+                geonamesModel.setGeonames(geonames);
+                initRVAdapter(geonamesModel.getGeonames());
+
+            } else {
+                Log.e(TAG, "GeonamesTable  is empty");
+                Toast.makeText(this, "Couldn't get cities information", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+
+            Log.i(TAG, "DB is empty");
+        }
+
 
     }
 

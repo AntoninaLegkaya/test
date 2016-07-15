@@ -9,4 +9,7 @@ public interface Observer {
     void onSucceeded(Object model);
 
     void onFailed(Object model);
+
+    void onFailedProvider(Object model);
+
 }

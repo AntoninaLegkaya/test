@@ -29,4 +29,9 @@ public class ActionObservable extends Observable<Observer> {
             observer.onFailed(this);
         }
     }
+    public void notifyFailedProvider() {
+        for (final Observer observer : mObservers) {
+            observer.onFailedProvider(this);
+        }
+    }
 }

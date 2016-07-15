@@ -18,7 +18,7 @@ public class GeonameResponse extends Response {
     public void save(Context context) {
         Geonames geonames = getTypedAnswer();
         if (geonames != null) {
-//            GeonamesTable.clear(context);
+            GeonamesTable.clear(context);
             GeonamesTable.save(context, geonames.getGeonames());
         }
     }
