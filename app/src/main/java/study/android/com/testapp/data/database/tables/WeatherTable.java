@@ -38,6 +38,9 @@ public class WeatherTable {
         if (weatherModel.getTempInf() != null) {
             values.put(Columns.TEMP, weatherModel.getTempInf());
         }
+        if (weatherModel.getGeonameLike() != null) {
+            values.put(Columns.GEONAME_LIKE, weatherModel.getGeonameLike());
+        }
 
         return values;
     }
@@ -49,7 +52,8 @@ public class WeatherTable {
         String condition = cursor.getString(cursor.getColumnIndex(Columns.CONDITION));
         String dateInf = cursor.getString(cursor.getColumnIndex(Columns.DATE_INF));
         String temp = cursor.getString(cursor.getColumnIndex(Columns.TEMP));
-        return new WeatherModel(geoname, dateInf, condition, temp);
+        String geoLike=cursor.getString(cursor.getColumnIndex(Columns.GEONAME_LIKE));
+        return new WeatherModel(geoname, dateInf, condition, temp,geoLike);
     }
 
 
@@ -64,6 +68,7 @@ public class WeatherTable {
         String GEONAME = "geoname";
         String CONDITION = "condition";
         String DATE_INF = "dateInf";
+        String GEONAME_LIKE = "geonameLike";
 
 
     }
@@ -78,7 +83,7 @@ public class WeatherTable {
                 Columns.GEONAME + " VARCHAR(200), " +
                 Columns.TEMP + " VARCHAR(200), " +
                 Columns.CONDITION + " VARCHAR(200)," +
-                Columns.DATE_INF + " VARCHAR(200)" + ");";
+                Columns.DATE_INF + " VARCHAR(200)," + Columns.GEONAME_LIKE + " VARCHAR(200)" +");";
 
         String DROP_REQUEST = "DROP TABLE IF EXISTS " + TABLE_NAME;
     }

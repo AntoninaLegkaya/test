@@ -1,6 +1,7 @@
 package study.android.com.testapp;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
@@ -214,8 +215,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                 initRVAdapter(geonamesModel.getGeonames());
 
             } else {
-                Log.e(TAG, "Geoname loader is empty");
-                Toast.makeText(this, "Couldn't get cities information", Toast.LENGTH_SHORT).show();
+                composeGeonamesListFromBD();
             }
 
 
@@ -235,35 +235,24 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
                             String geoname = channel.getLocation().getCity();
                             String condition = channel.getItem().getCondition().getText();
                             String dataInf = channel.getItem().getCondition().getDate();
-                            weatherModel = new WeatherModel(geoname, dataInf, condition, temp);
-//                            Log.i(TAG, "Weather temprature: " + temp);
-                            showProgress(false);
+                            Cursor cursor = findDataInWeatherBD();
+                            weatherModel = new WeatherModel(geoname, dataInf, condition, temp, this.geoname);
+                            if (cursor.getCount() > 0) {
+                                Log.i(TAG, "Update line with geonameLike: " + this.geoname);
+                                String selection = WeatherTable.Columns.GEONAME_LIKE + " LIKE ?";
+                                String[] selectionArgs = new String[]{this.geoname};
+                                this.getContentResolver().update(
+                                        WeatherTable.URI, WeatherTable.toContentValues(weatherModel),
+                                        selection, selectionArgs);
 
-                            Log.i(TAG, "----------------------Weather data from DB-----------------------------");
-
-                            Cursor cursor = this.getContentResolver().query(WeatherTable.URI,
-                                    null, null, null, null);
-                            if (cursor != null) {
-                                if (cursor.moveToFirst()) {
-                                    Log.i(TAG, cursor.getCount() + "  rows");
-                                    StringBuilder sb = new StringBuilder();
-                                    do {
-                                        sb.setLength(0);
-                                        for (String cn : cursor.getColumnNames()) {
-                                            sb.append(cn + " : "
-                                                    + cursor.getString(cursor.getColumnIndex(cn)) + "; ");
-                                        }
-                                        Log.i(TAG, sb.toString());
-                                    } while (cursor.moveToNext());
-                                }
                             } else {
-
-                                Log.i(TAG, "DB is empty");
+                                Log.i(TAG, "Save line with geonameLike: " + this.geoname);
+                                WeatherTable.save(this, weatherModel);
                             }
+                            showProgress(false);
                             Intent intent = new Intent(this, WeatherViewActivity.class);
                             intent.putExtra(WeatherViewActivity.EXTRA_WEATHER, weatherModel);
                             startActivity(intent);
-
 
                         } else
 
@@ -284,9 +273,9 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
 
                 }
 
-
             } else {
-                Toast.makeText(this, "Couldn't get weather information", Toast.LENGTH_SHORT).show();
+
+                composeWeatherCardFromBD();
 
             }
             showProgress(false);
@@ -318,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
             rv.setAdapter(adapter);
             showProgress(false);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.i(TAG, "Error couldn't compose geonames list");
         }
 
     }
@@ -384,6 +373,12 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
     public void onFailedProvider(Object model) {
 
         Toast.makeText(this, "Provider absent", Toast.LENGTH_SHORT).show();
+        composeGeonamesListFromBD();
+
+
+    }
+
+    private void composeGeonamesListFromBD() {
         Cursor cursor = this.getContentResolver().query(GeonamesTable.URI,
                 null, null, null, null);
 
@@ -402,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
             }
 
             List<Geoname> geonames = GeonamesTable.listFromCursor(cursor);
-            if (geonames != null) {
+            if (!geonames.isEmpty()) {
                 geonamesModel.setGeonames(geonames);
                 initRVAdapter(geonamesModel.getGeonames());
 
@@ -412,11 +407,44 @@ public class MainActivity extends AppCompatActivity implements Observer, LoaderM
             }
 
         } else {
-
+            Toast.makeText(this, "You haven't  cities data", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "DB is empty");
         }
+    }
 
+    private void composeWeatherCardFromBD() {
+        Log.i(TAG, "----------------------Weather data from DB-----------------------------");
+        if (this.geoname != null) {
+            Cursor cursor = findDataInWeatherBD();
+            if (cursor.getCount() > 0) {
+                if (cursor.moveToFirst()) {
+                    Log.i(TAG, cursor.getCount() + "  rows");
+                    weatherModel = WeatherTable.fromCursor(cursor);
+                    if (!weatherModel.isEmpty(weatherModel)) {
+                        Intent intent = new Intent(this, WeatherViewActivity.class);
+                        intent.putExtra(WeatherViewActivity.EXTRA_WEATHER, weatherModel);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(this, "Couldn't get weather information from BD", Toast.LENGTH_SHORT).show();
+                    }
+                }
 
+            } else {
+                Log.i(TAG, "DB is empty");
+            }
+        } else {
+            Log.i(TAG, "Geoname didn't selected");
+        }
+
+    }
+
+    private Cursor findDataInWeatherBD() {
+        String selection = WeatherTable.Columns.GEONAME_LIKE + " LIKE ?";
+//            this.geoname = "%" + geoname.substring(0, geoname.length() / 2) + "%";
+        String[] selectionArgs = new String[]{geoname};
+        Log.i(TAG, WeatherTable.Columns.GEONAME_LIKE + " : " + selectionArgs[0]);
+        return this.getContentResolver().query(WeatherTable.URI,
+                null, selection, selectionArgs, null, null);
     }
 
     private void showProgress(final boolean show) {

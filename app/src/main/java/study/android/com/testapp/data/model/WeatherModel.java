@@ -12,11 +12,19 @@ public class WeatherModel implements Parcelable {
     public WeatherModel() {
     }
 
-    public WeatherModel(String geoname, String dateInf, String condition, String tempInf) {
+    public WeatherModel(String geoname, String dateInf, String condition, String tempInf, String geonameLike) {
         this.geoname = geoname;
         this.dateinf = dateInf;
         this.condition = condition;
         this.tempInf = tempInf;
+        this.geonameLike=geonameLike;
+    }
+
+    public boolean isEmpty(WeatherModel weatherModel) {
+        if (weatherModel.getGeoname() == null) {
+            return true;
+        } else
+            return false;
     }
 
     public String getDateinf() {
@@ -56,6 +64,13 @@ public class WeatherModel implements Parcelable {
         this.geoname = geoname;
     }
 
+    public String getGeonameLike() {
+        return geonameLike;
+    }
+
+    public void setGeonameLike(String geonameLike) {
+        this.geonameLike = geonameLike;
+    }
 
     @Override
     public int describeContents() {
@@ -68,6 +83,7 @@ public class WeatherModel implements Parcelable {
         this.dateinf = in.readString();
         this.condition = in.readString();
         this.tempInf = in.readString();
+        this.geonameLike = in.readString();
 
     }
 
@@ -89,10 +105,12 @@ public class WeatherModel implements Parcelable {
         dest.writeString(condition);
         dest.writeString(dateinf);
         dest.writeString(tempInf);
+        dest.writeString(geonameLike);
     }
 
     private String condition;
     private String tempInf;
     private String geoname;
     private String dateinf;
+    private String geonameLike;
 }

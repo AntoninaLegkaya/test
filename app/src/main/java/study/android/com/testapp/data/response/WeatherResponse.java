@@ -28,8 +28,6 @@ public class WeatherResponse extends Response {
                         String geoname = channel.getLocation().getCity();
                         String condition = channel.getItem().getCondition().getText();
                         String dataInf = channel.getItem().getCondition().getDate();
-                        WeatherModel weatherModel = new WeatherModel(geoname, dataInf, condition, temp);
-                        WeatherTable.save(context, weatherModel);
 
                     } else
 
