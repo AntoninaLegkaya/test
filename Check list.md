@@ -1,15 +1,21 @@
 ***1. What is the suffix of Android application package file?***
-   ### *Answer:* ###
+  
+   *Answer:*
+   
 All android application compile and packaged in one archive file with expansion
  .APK. This archive includes all code application (.dex files- compiled code for DavlikVM, resources, .manifest file). .APK is compressed archive for execution DavlikVM. It dosen’t encrypted, it’s  one of subset ZIP file format.
  
  ***2. What is Dalvik?***
-   ### *Answer:* ###
+ 
+   *Answer:* 
+ 
 Register oriented virtual machine. VM for execute program which are written on Java language. But this VM use byte-code proprietary format: after compile java code (with help javace) special tool dx from Android SDK converts class files (.classes) into file  proprietary format .dex which included in package application (.apk). From version 4.4 was created alternative Android Runtime (from Android 5.0  completely replaced Davlik).
 ART uses JIT- compilation (during application execution ), ART compiles the application during its installation. For backward compatibility ART uses the same byte - code that the Dalvik.
 
 ***3. Does each process have its own virtual machine? What consequences of this?*** 
-  ### *Answer:* ###
+
+   *Answer:* 
+  
  Each Android application installed on your device operates in its own
  " sandbox "
 Android operating system is a multi-user Linux system , in which each application is selected by the user 
@@ -25,15 +31,21 @@ the app may request permission to access the data of the device , such as a user
 
 
 ***4. Name different types of application components.***
-  ### *Answer:* ###
+
+   *Answer:* 
+  
  Activities, Services, Broadcast receivers, Content providers and Intents.
  
 ***5. Where does the manifest file must be located?***
-  ### *Answer:* ###
+
+   *Answer:* 
+  
 In the root folder of each application should be AndroidManifest.xml file.
 
 ***6. What information can be included in the manifest file?***
-  ### *Answer:* ###
+
+   *Answer:* 
+  
 + it specifies the Java package name for the application. This package name is a unique application ID .
 + it describes all application components- Activities, Services, Broadcast receivers и Content providers, it contains the names of the classes that implement each component , and publishes their capabilities ( indicating , for example , what kind of messages they can take Intent). On the basis of those declarations the Android system can determine what components make up the application and can be run under any conditions .
 + it determines the application components will be placed in public processes.
