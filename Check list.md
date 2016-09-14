@@ -55,3 +55,100 @@ He declares which permissions should be given to the application so that it can 
 He announces a minimum level of Android API- interface , which requires an application .
 + it contains list of libraries which should be linked application.
 
+
+***7. How to make localization on in your Android project?***
+ 
+  *Answer:*
+  
+For creating localization we can use mechanism of dynamic  selection of desired resource. We can create specific directory structure in the project. This directory tree will be include resources for specific languages, regions andhardware configurations.
+We can  select specify alternative values, create own directory structure within the res directory by using a hyphen (-). For example, we want to create additional string resources for French, French Canadian region and for the Russian language. Then it will be looking in the project directory structure as follows:
+
+      Project/
+              res/ values/
+		                      strings.xml
+		             values-fr/
+		                      strings.xml
+	              	values-fr-rCA/
+		                      strings.xml
+                  values-ru/
+		                      strings.xml
+
+
+  
+***8. Which methods can be used to start Activity?***
+  
+   *Answer:*
+   
+The startActivity(Intent) method is used to start a new activity, which will be placed at the top of the activity stack. It takes a single argument, an Intent, which describes the activity to be executed.
+Sometimes we want to get a result back from an activity when it ends. To do this, we call the startActivityForResult(Intent, int) version with a second integer parameter identifying the call. The result will come back through our onActivityResult(int, int, Intent) method.
+
+***9. What the difference between startActivity and startActivityForResult?***
+
+  *Answer:*
+  
+StartActivity(Intent) and startActivityForResult(Intent, int) used to start new Activity and do some operation, different in that  at second  method we started activity and return result. At the end of follow-up operation, it returns the result in the Intent object in an induced onActivityResult () method.
+
+***10. Name all callbacks of the Activity life-cycle.***
+
+  *Answer:*
+  
+Activity can be one of four states:
+Active или Running – activity in the foreground, has focus and user can interact with it;
+Paused- it lost focus, but is  still visible to the user, above is another activity,which is transparent or not cover all screen, suspended activity  completely “living” (it state is saved), but can be destroy by system if memory shortage ;
+Stopped- another activity is fully covered screen. It does not visible to the user and will  be destroyed by system, when will be needed memory.
+If an activity is paused or stopped, the system can drop the activity from memory by either asking it to finish, or simply killing its process. When it is displayed again to the user, it must be completely restarted and restored to its previous state.
+Moving from state to state, Activity notify the calling the following methods:
+
+  void onCreate()
+  
+  void onStart()
+  
+  void onRestart()
+  
+  void onResume()
+  
+  void onPause()
+  
+  void onStop()
+  
+  void onDestroy()
+  
+***11. What state of the activity corresponds to the each callback?***
+
+  *Answer:*
+  
+There are three key loops we may be interested in monitoring within our activity:
+
++ Activity lifecycle begin from call method onCreate(), where will do all setup of "global" state in onCreate(), and release all remaining resources in onDestroy().
++ The visible lifetime of an activity happens between a call to onStart() until a corresponding call to onStop(). During this time the user can see the activity on-screen, though it may not be in the foreground and interacting with the user. The onStart() and onStop() methods can be called multiple times, as the activity becomes visible and hidden to the user.
++ The foreground lifetime of an activity happens between a call to onResume() until a corresponding call to onPause(). During this time the activity is in front of all other activities and interacting with the user. An activity can frequently go between the resumed and paused states- for example method onPause() call when device goes to sleep or when call other activity,method onResume() - when an activity result is delivered
+
++ onCreate()
+
+              It called once when creating activity. It must be done the initial configuration - create views, bind data to lists, etc. Behind him, always call OnStart () method.
+              
+   + onRestart()
+
+                Called after your activity has been stopped, prior to it being started again. Always followed by onStart()
+   +  onStart()
+    
+                Called when the activity is becoming visible to the user. Followed by onResume() if the activity comes to the foreground, or onStop() if it becomes hidden.
+       + onResume()
+       
+                            Called when the activity will start interacting with the user. At this  point your activity is at the top of the activity stack, with user input going to it. Always followed by onPause().
+         
+        + onPause()
+        
+ 			                 Called when the system is about to start resuming a previous activity. This is typically used to commit unsaved changes to persistent data, stop animations and other things that may be consuming CPU, etc. Implementations of this method must be very quick because the next activity will not be resumed until this method returns. Followed by either onResume() if the activity returns back to  the front, or onStop() if it becomes invisible to the user.
+ 	+ onStop()
+ 	
+		        	Called when the activity is no longer visible to the user, because another activity has been resumed and is covering this one. This may happen either because a new activity is being started, an existing one is being brought in front of this one, or this one is being destroyed.
+              Followed by either onRestart() if this activity is coming back to interact with the user, or onDestroy() if this activity is going away.
++ onDestroy()
+
+              The final call you receive before your activity is destroyed. This can happen either because the activity is finishing (someone called finish() on it, or because the system is temporarily destroying this instance of the activity to save space. 
+
+Three methods OnPause(), OnStop() and OnDestroy() when system can kills process but only onPause() is guaranteed to be called before destruction process. Therefore it is necessary to use OnPause () method to save the modified data .
+
+
+  
