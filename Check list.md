@@ -150,5 +150,21 @@ There are three key loops we may be interested in monitoring within our activity
 
 Three methods OnPause(), OnStop() and OnDestroy() when system can kills process but only onPause() is guaranteed to be called before destruction process. Therefore it is necessary to use OnPause () method to save the modified data .
 
+***12. Callback onCreate(Bundle) has an incoming parameter. What is it used for?***
 
+ *Answer:*
+	
+Before making the operation accessible to the destruction, the system calls onSaveInstanceState () method. The system transmits this method Bundle object, we can save information about the status (typically non-persistent, dynamic data) of operations in the form of pairs of "name-value" through the use of techniques such as putString () and putInt (). Then, if the system ends the process of your application and the user returns to your operation, the system re-generates and transmits an operation Bundle object in both methods: onCreate () and onRestoreInstanceState (). Using any of these methods can be derived from the object information stored Bundle of operation and restore its state. If this information is missing, the Bundle object transmitted with null (this happens when the operation is created for the first time).
+
+***13. Which method is typically used to commit unsaved changes to persistent data?***
+
+ *Answer:*
   
+The system can kills process in three methods OnPause(), OnStop() and OnDestroy() but only onPause() is guaranteed to be called before destruction process. Therefore it is necessary to use OnPause () method to save the modified data . If our  data is so big that we have to storage it for several seconds, we may open a background Service (e.g. IntentService) to save.
+
+***14. Imagine, the system destroyed an activity in order to recover memory. Which callback method of an activity class allows you to save information about the state of your activity?***
+
+ *Answer:*
+	
+When the system destroys an activity in order to recover memory, the Activity object is destroyed, so the system cannot simply resume it with its state intact. Instead, the system must recreate the Activity object if the user navigates back to it. Yet, the user is unaware that the system destroyed the activity and recreated it and, thus, probably expects the activity to be exactly as it was. In this situation, you can ensure that important information about the activity state is preserved by implementing an additional callback method that allows you to save information about the state of your activity: onSaveInstanceState().
+	
