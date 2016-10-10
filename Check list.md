@@ -175,16 +175,118 @@ When the system destroys an activity in order to recover memory, the Activity ob
 An Intent is a messaging object you can use to request an action from another app component.
 Intents facilitate communication between components. There are three use-cases:
 
-	+ To start an Activity
-	
++ To start an Activity
       	You can start a new instance of an Activity by passing an Intent to startActivity(). The Intent describes the activity to start and carries any necessary data.If you want to receive a result from the activity when it finishes, call startActivityForResult(). Your activity receives the result as a separate Intent object in your activity's onActivityResult() callback. 
 	
-	+To start a Service
-	
++ To start a Service
 	A Service is a component that performs operations in the background without a user interface. You can start a service to perform a one-time operation (such as download a file) by passing an Intent tostartService(). The Intent describes the service to start and carries any necessary data. If the service is designed with a client-server interface, you can bind to the service from another component by passing an Intent to bindService().
 	
-	+ To delivery broadcast
-	
++ To delivery broadcast
 	A broadcast is a message that any app can receive. The system delivers various broadcasts for system events, such as when the system boots up or the device starts charging. You can deliver a broadcast to other apps by passing an Intent to sendBroadcast(), sendOrderedBroadcast(), or sendStickyBroadcast().
 
-	
+***16. What methods can deliver intents to a particular component?***
+
+ *Answer:*
+ 
++ sartActivity()
++ startActivityForResult()
++ onActivityResult() callback
++ startService()
++ bindService()
++ sendBroadcast()
+
+    Broadcast the given intent to all interested BroadcastReceivers. This call      is asynchronous; it returns immediately, and you will continue executing        while the receivers are run. No results are propagated from receivers and       receivers can not abort the broadcast.
++ sendOrderedBroadcast()
+
+    Broadcast the given intent to all interested BroadcastReceivers, delivering     them one at a time to allow more preferred receivers to consume the             broadcast before it is delivered to less preferred receivers. This call is      asynchronous; it returns immediately, and you will continue executing while     the receivers are run. Allow receivers to propagate results or abort the        broadcast
++ sendStickyBroadcast()
+
+     This method was deprecated in API level 21
+     
+     
+***17. What does intent object contains? Describe each part.***
+ 
+*Answer:*
+  
+ An Intent object carries information that the Android system uses to determine which component to start (such as the exact component name or component category that should receive the intent), plus information that the recipient component uses in order to properly perform the action (such as the action to take and the data to act upon).
+ 
++ **Component name**
+ (this is optional, but it's the critical piece of information that makes an intent explicit, meaning that the intent should be delivered only to the app component defined by the component name. Without a component name, the intent is implicit and the system decides which component should receive the intent based on the other intent information (such as the action, data, and category—described below). So if you need to start a specific component in your app, you should specify the component name. 
+This field of the Intent is a ComponentName object, which you can specify using a fully qualified class name of the target component, including the package name of the app. For example, com.example.ExampleActivity. You can set the component name with setComponent(),setClass(), setClassName(), or with the Intent constructor)
++ **Action**
+(A string that specifies the generic action to perform (such as view or pick). In the case of a broadcast intent, this is the action that took place and is being reported. The action largely determines how the rest of the intent is structured—particularly what is contained in the data and extras.You can specify your own actions for use by intents within your app (or for use by other apps to invoke components in your app), but you should usually use action constants defined by the Intent class or other framework classes. If you define your own actions, be sure to include your app's package name as a prefix. You can specify the action for an intent with setAction() or with an Intent constructor.)
+
++ **Data**
+(The type of data supplied is generally dictated by the intent's action. The URI (a Uri object) that references the data to be acted on and/or the MIME type of that data. When creating an intent, it's often important to specify the type of data (its MIME type) in addition to its URI. So specifying the MIME type of your data helps the Android system find the best component to receive your intent. However, the MIME type can sometimes be inferred from the URI—particularly when the data is a content: URI, which indicates the data is located on the device and controlled by a ContentProvider, which makes the data MIME type visible to the system. To set only the data URI, call setData(). To set only the MIME type, call setType(). If necessary, you can set both explicitly with setDataAndType(). If you want to set both the URI and MIME type, **do not** call setData() and setType() because they each nullify the value of the other. Always use setDataAndType() to set both URI and MIME type.)
+Category (A string containing additional information about the kind of component that should handle the intent. Any number of category descriptions can be placed in an intent, but most intents do not require a category. (CATEGORY_BROWSABLE, CATEGORY_LAUNCHER))
++ **Extras**
+( Key-value pairs that carry additional information required to accomplish the requested action. You can add extra data with various putExtra() methods, each accepting two parameters: the key name and the value. You can also create a Bundle object with all the extra data, then insert the Bundle in the Intent with putExtras(). The Intent class specifies many EXTRA_* constants for standardized data types. If you need to declare your own extra keys (for intents that your app receives), be sure to include your app's package name as a prefix.)
++ **Flags** (The flags may instruct the Android system how to launch an activity (for example, which task the activity should belong to) and how to treat it after it's launched (for example, whether it belongs in the list of recent activities).)
+
+***18. What two groups of the intents do you know? What the difference?***
+
+*Answer:*
+ 
+There are two types of intents:
++ **Explicit** intents specify the component to start by name (the fully-qualified class name). You'll typically use an explicit intent to start a component in your own app, because you know the class name of the activity or service you want to start. For example, start a new activity in response to a user action or start a service to download a file in the background.
++ **Implicit** intents do not name a specific component, but instead declare a general action to perform, which allows a component from another app to handle it. For example, if you want to show the user a location on a map, you can use an implicit intent to request that another capable app show a specified location on a map.
+
+   When you create an explicit intent to start an activity or service, the system immediately starts the app component specified in the Intent object.
+   When you create an implicit intent, the Android system finds the appropriate component to start by comparing the contents of the intent to the intent filters declared in the manifest file of other apps on the device. If the intent matches an intent filter, the system starts that component and delivers it the Intent object. If multiple intent filters are compatible, the system displays a dialog so the user can pick which app to use.
+   
+***19. What is intent-filter?***
+ 
+*Answer:*
+ 
+An intent filter is an expression in an app's manifest file that specifies the type of intents that the component would like to receive. For instance, by declaring an intent filter for an activity, you make it possible for other apps to directly start your activity with a certain kind of intent. Likewise, if you do not declare any intent filters for an activity, then it can be started only with an explicit intent.
+    To ensure your app is secure, always use an explicit intent when starting a Service and do not declare intent filters for your services. Using an implicit intent to start a service is a security hazard because you cannot be certain what service will respond to the intent, and the user cannot see which service starts. Beginning with Android 5.0 (API level 21), the system throws an exception if you call bindService() with an implicit intent.
+    
+***20. How to check what components matches to your intent?***
+    
+  *Answer:*
+   
+  It's possible that a user won't have any apps that handle the implicit intent you send to startActivity(). If that happens, the call will fail and your app will crash. To verify that an activity will receive the intent, call resolveActivity() on your Intent object. If the result is non-null, then there is at least one app that can handle the intent and it's safe to call startActivity(). If the result is null, you should not use the intent and, if possible, you should disable the feature that issues the intent.
+When the system receives an implicit intent to start an activity, it searches for the best activity for the intent by comparing the intent to intent filters based on three aspects:
++ The intent action
++ The intent data (both URI and data type)
++ The intent category
+
+The following sections describe how intents are matched to the appropriate component(s) in terms of how the intent filter is declared in an app's manifest file.
+   + Action test
+
+To get through this filter, the action specified in the Intent must match one of the actions listed in the filter. If the filter does not list any actions, there is nothing for an intent to match, so all intents fail the test. However, if an Intent does not specify an action, it will pass the test (as long as the filter contains at least one action).
+
++ Category test
+
+For an intent to pass the category test, every category in the Intent must match a category in the filter. The reverse is not necessary—the intent filter may declare more categories than are specified in the Intent and the Intent will still pass. Therefore, an intent with no categories should always pass this test, regardless of what categories are declared in the filter.
+Android automatically applies the the CATEGORY_DEFAULT category to all implicit intents passed to *startActivity()* and *startActivityForResult()*. So if you want your activity to receive implicit intents, it must include a category for"android.intent.category.DEFAULT" in its intent filters (as shown in the previous <intent-filter> example.
+
++ Data test
+
+To specify accepted intent data, an intent filter can declare zero or more <data> elements. 
+Each <data> element can specify a URI structure and a data type (MIME media type). There are separate attributes — scheme, host, port, and path — for each part of the URI:
+<scheme>://<host>:<port>/<path>
+For example:
+content://com.example.project:200/folder/subfolder/etc
+In this URI, the scheme is content, the host is com.example.project, the port is 200, and the path is folder/subfolder/etc. Each of these attributes is optional in a <data> element, but there are linear dependencies:
+
++ If a scheme is not specified, the host is ignored.
++ If a host is not specified, the port is ignored.
++ If both the scheme and host are not specified, the path is ignored.
+
+When the URI in an intent is compared to a URI specification in a filter, it's compared only to the parts of the URI included in the filter. For example:
++ If a filter specifies only a scheme, all URIs with that scheme match the filter.
++ If a filter specifies a scheme and an authority but no path, all URIs with the same scheme and authority pass the filter, regardless of their paths.
++ If a filter specifies a scheme, an authority, and a path, only URIs with the same scheme, authority, and path pass the filter.
+
+A path specification can contain a wildcard asterisk (*) to require only a partial match of  the path name. The data test compares both the URI and the MIME type in the intent to a URI and MIME type specified in the filter. 
+
+The rules are as follows:
+
+ 1. An intent that contains neither a URI nor a MIME type passes the test only if the filter does not specify any URIs or MIME types.
+ 2. An intent that contains a URI but no MIME type (neither explicit nor inferable from the URI) passes the test only if its URI matches the filter's URI format and the filter likewise does not specify a MIME type.
+ 3. An intent that contains a MIME type but not a URI passes the test only if the filter lists the same MIME type and does not specify a URI format.
+ 4. An intent that contains both a URI and a MIME type (either explicit or inferable from the URI) passes the MIME type part of the test only if that type matches a type listed in the filter. It passes the URI part of the test either if its URI matches a URI in the filter or if it has a content: or file: URI and the filter does not specify a URI. In other words, a component is presumed to support content: and file: data if its filter lists only a MIME type.
+
+This last rule, rule (d), reflects the expectation that components are able to get local data from a file or content provider. Therefore, their filters can list just a data type and do not need to explicitly name the content: and file: schemes. Another common configuration is filters with a scheme and a data type. For example, a <data> element like the following tells Android that the component can retrieve video data from the network in order to perform the action:  
+
