@@ -348,7 +348,11 @@ Position is specified in the attributes of an element Android: layout_x and Andr
 
 LinearLayout is a view group that aligns all children in a single direction, vertically or horizontally.
 RelativeLayout — type layout in which the positioning elements takes place in relation to each other and relative to the main container
-25. What method of the Activity class should be called to attach the view hierarchy tree to the screen for rendering?
+
+***25. What method of the Activity class should be called to attach the view hierarchy tree to the screen for rendering?***
+
+*Answer:*
+
 While compiling the application, each XML layout file is compiled into a View resource. You need to download a layout resource in the application code in the implementation of the callback method Activity.onCreate (). To do this, call setContentView() method, passing a reference to the layout resource in the following form: R.layout.layout_file_name.
 
 
@@ -391,7 +395,7 @@ Application can programmatically create objects View and ViewGroup (as well as m
 Any View object may be associated integer identifier that is used to refer to the View object uniqueness in the hierarchy. During application compile this identifier is used as an integer, but the ID is usually assigned in the layout XML file as a string in the id attribute.
 @ Character at the beginning of the line indicates that the XML processor must parse the remainder of the identifier parsing execute it and identify it as a resource identifier. plus (+) symbol indicates that this is the name of a new resource that you want to create and add to our resources (in R.java file).
 
-****30. What is the name of Android resource class?***
+***30. What is the name of Android resource class?***
 
 *Answer:*
 
