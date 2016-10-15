@@ -288,5 +288,173 @@ The rules are as follows:
  3. An intent that contains a MIME type but not a URI passes the test only if the filter lists the same MIME type and does not specify a URI format.
  4. An intent that contains both a URI and a MIME type (either explicit or inferable from the URI) passes the MIME type part of the test only if that type matches a type listed in the filter. It passes the URI part of the test either if its URI matches a URI in the filter or if it has a content: or file: URI and the filter does not specify a URI. In other words, a component is presumed to support content: and file: data if its filter lists only a MIME type.
 
-This last rule, rule (d), reflects the expectation that components are able to get local data from a file or content provider. Therefore, their filters can list just a data type and do not need to explicitly name the content: and file: schemes. Another common configuration is filters with a scheme and a data type. For example, a <data> element like the following tells Android that the component can retrieve video data from the network in order to perform the action:  
+This last rule, rule (d), reflects the expectation that components are able to get local data from a file or content provider. Therefore, their filters can list just a data type and do not need to explicitly name the content: and file: schemes. Another common configuration is filters with a scheme and a data type. For example, a <data> element like the following tells Android that the component can retrieve video data from the network in order to perform the action.
+
+***21. What class is the parent for all UI elements?***
+
+ *Answer:*
+
+The user interface for activity (Activity) is determined using models. During the execution of models - copies of the «android.view.ViewGroups». The model determines the user interface elements, their properties and location. Elements of the user interface based on the class «android.view.View». **ViewGroup - View subclass**. Layouts may contain UI (Visits / or) other Types of Layouts (ViewGroups). You should not make large investments in child elements ViewGroups, as this affects performance.
+
+***22. In which two groups all UI elements are separated?***
+
+*Answer:*
+
+The user interface for each application component is determined by the object hierarchy  View and ViewGroup
+
+***23. What layouts do you know?***
+
+*Answer:*
+
+**LinearLayout**  is a view group that aligns all children in a single direction, vertically or horizontally. You can specify the layout direction with the android:orientation attribute. All children of a LinearLayout are stacked one after the other, so a vertical list will only have one child per row, no matter how wide they are, and a horizontal list will only be one row high (the height of the tallest child, plus padding). A LinearLayout respects margins between children and the gravity (right, center, or left alignment) of each child.
+
+**RelativeLayout** — type layout in which the positioning elements takes place in relation to each other and relative to the main container.
+Attributes positioning relative to the container:
++ android:layout_alignParentBottom – bottom element is at the bottom of the container
++android:layout_alignParentLeft – the left part of the element adjacent to the left side of the container
++ android:layout_alignParentRight – the right part of the element adjacent to the right side of the container
++ android:layout_alignParentTop – the item at the top of the container
++ android:layout_centerHorizontal – the element is positioned centrally with respect to the horizontal size of the container
++ android:layout_centerInParent – the element is positioned centrally with respect to the horizontal and vertical size of the container sizes
++ android:layout_centerVertical – the element is positioned centrally with respect to the vertical size of the container
+
+Attributes positioning relative to other elements. As the values ​​of these attributes are set id element relative positioning of which will be produced.
+
++ android:layout_above –are placed above said element
++ android:layout_below – are placed below said element
++ android:layout_toLeftOf – are placed on the left of the specified item
++ android:layout_toRightOf – Are placed on the right of the specified item
+Alignment relative to other elements:
++ android:layout_alignBaseline – aligns the baseline element baseline specified item
++ android:layout_alignBottom – aligns the bottom of the element at the bottom specified element
++ android:layout_alignLeft – alignы left edge of the element to left edge specified element
++ android:layout_alignRight – aligns right edge of the element to the right edge specified element
++ android:layout_alignTop – aligns top part of the element in correspondence with the upper part specified element
+
+**TableLayout** - tabular layout.
+Organize items in the rows and columns of the table. To arrange rows serves tag, and the number of columns is determined by the maximum number of elements within the same. If the element is to take a few cells used attribute android: layout_span. Default arrange rows of the table, if we do not organize rows and columns that you want to use the attribute android: layout_column.
+
+**AbsoluteLayout**
+(Use is not recommended, not recommended)
+AbsoluteLayout - means that each layout element will have an absolute position relative to the upper left corner of the screen defined by using x and y coordinates. Those. upper left corner corner of the screen when AbsoluteLayout has the coordinates x = 0, y = 0.
+Position is specified in the attributes of an element Android: layout_x and Android: layout_y.
+
+**FrameLayout** - type layout in which you can only display one item per line. Those. if inside FrameLayout you place multiple items, the following will be displayed on top of the previous one.
+
+
+***24. What the difference between LinearLayout and RelativeLayout?***
+
+*Answer:*
+
+LinearLayout is a view group that aligns all children in a single direction, vertically or horizontally.
+RelativeLayout — type layout in which the positioning elements takes place in relation to each other and relative to the main container
+25. What method of the Activity class should be called to attach the view hierarchy tree to the screen for rendering?
+While compiling the application, each XML layout file is compiled into a View resource. You need to download a layout resource in the application code in the implementation of the callback method Activity.onCreate (). To do this, call setContentView() method, passing a reference to the layout resource in the following form: R.layout.layout_file_name.
+
+
+***26. What is the suffix of the files, where you can define your layout?***
+
+*Answer:*
+
+Alternate Layouts - it allows you to use a different layout for different screen orientations.
+XML for an alternative layout is placed in the project folder:
+
+- res/layout-land – alternative layout for  landscape UI
+- res/layout-port – alternative layout for  portrait UI
+- res/lauout-square – alternative layout for   square UI
+
+***27. How to receive some event from your view?***
+
+*Answer:*
+
+Class View also provides a set of nested interfaces with callbacks. These interfaces, called event receivers, and serve as interceptors user interaction with your user interface. Event Listeners - a class interface View, which contains one callback method. These methods will be called by the platform Android, as a result of user interaction with the user interface object is activated display object View, in which the receiver is registered. Interfaces included in the event receiver are the following callback methods: onClick(), onLongClick(), onFocusChange(), onKey(), onTouch(), onCreateContextMenu(). To define one of these methods and handle events, implement a nested interface in your process or define it as an anonymous class. Then, pass an instance of the implementation of the appropriate method View.set ... Listener ().Event Handlers. Some of the common callbacks used for event handling, including:
++ onKeyDown(int, KeyEvent) - Called when a new key event occurs.
++ onKeyUp(int, KeyEvent) - Called when a key up event occurs.
++ onTrackballEvent(MotionEvent) - Called when a trackball motion event occurs.
++ onTouchEvent(MotionEvent) - Called when a touch screen motion event occurs.
++ onFocusChanged(boolean, int, Rect) - Called when the view gains or loses focus.
+when managing more complex events inside a layout, consider these other methods:
++ Activity.dispatchTouchEvent(MotionEvent) - This allows your Activity to intercept all touch events before they are dispatched to the window.
++ ViewGroup.onInterceptTouchEvent(MotionEvent) - This allows a ViewGroup to watch events as they are dispatched to child Views.
++ ViewParent.requestDisallowInterceptTouchEvent(boolean) - Call this upon a parent View to indicate that it should not intercept touch events with onInterceptTouchEvent(MotionEvent).
+
+***28. Do you can Instantiate layout elements at runtime?***
+
+*Answer:*
+
+Application can programmatically create objects View and ViewGroup (as well as manage their properties). You can be declared in default XML layouts, including screen elements that will appear in the pilot, and their properties. Then you can add the application code, which allows you to change the status of objects on the screen (including the declared XML) at runtime. The advantage of user interface declarations in the XML file is that in this way you can more effectively separate the presentation of your application from the code that controls its behavior.
+
+***29. This is the typical XML attribute android:id="@+id/my_button". Please, explain, what does each word means.***
+
+*Answer:*
+
+Any View object may be associated integer identifier that is used to refer to the View object uniqueness in the hierarchy. During application compile this identifier is used as an integer, but the ID is usually assigned in the layout XML file as a string in the id attribute.
+@ Character at the beginning of the line indicates that the XML processor must parse the remainder of the identifier parsing execute it and identify it as a resource identifier. plus (+) symbol indicates that this is the name of a new resource that you want to create and add to our resources (in R.java file).
+
+****30. What is the name of Android resource class?***
+
+*Answer:*
+
+R.java
+
+***32. What the difference between fill_parent and match_parent?***
+
+*Answer:*
+
+**FILL_PAREN**T (renamed **MATCH_PARENT** in API Level 8 and higher), which means that the view wants to be as big as its parent (minus padding)
+**WRAP_CONTENT**, which means that the view wants to be just big enough to enclose its content (plus padding)
+
+
+***33. What are the padding and margins? How do they refer to the size?***
+
+*Answer:*
+
+**Padding** is the space inside the border, between the border and the actual view's content. Note that padding goes completely around the content: there is padding on the top, bottom, right and left sides (which can be independent).
+**Margins** are the spaces outside the border, between the border and the other elements next to this view. In the image, the margin is the grey area outside the entire object. Note that, like the padding, the margin goes completely around the content: there are margins on the top, bottom, right, and left sides.
+
+**match_parent (fill_parent)** - it means that the element will take all available to him in the parent element width / height.
+
+**wrap_content** - width / height of the element is determined by its contents
+
+***34. Can components of the same application run in the different processes? How to do this?***
+
+*Answer:*
+
+By default, all **components of the same application run in the same process** and most applications should not change this. However, if you find that you need to control which process a certain component belongs to, you can do so in the manifest file.
+The manifest entry for each type of component element—<activity>, <service>, <receiver>, and <provider>—supports an **android:process** attribute that can specify a process in which that component should run. You can set this attribute so that each component runs in its own process or so that some components share a process while others do not. You can also set android:process so that components of different applications run in the same process—provided that the applications share the same Linux user ID and are signed with the same certificates.
+The <application> element also supports an android:process attribute, to set a default value that applies to all components.
+If your launching app has the package name
+com.mycompany.mymainapp
+and is therefore assigned a process name that is that same string, then, if you use
+android:process=":myhelp"
+on your launched activity, it will be assigned the process name
+com.mycompany.mymainapp:myhelp
+and that process will have its own, separate process ID, which you can view (for example in DDMS).
+
+***35. There are five levels in the importance hierarchy of the processes. Call them in details.***
+
+*Answer:*
+
+**Foreground process**
+A process that is required for what the user is currently doing. A process is considered to be in the foreground if any of the following conditions are true:
++ It hosts an Activity that the user is interacting with (the Activity's onResume() method has been called).
++ It hosts a Service that's bound to the activity that the user is interacting with.
++ It hosts a Service that's running "in the foreground"—the service has called startForeground().
++ It hosts a Service that's executing one of its lifecycle callbacks (onCreate(), onStart(), or onDestroy()).
++ It hosts a BroadcastReceiver that's executing its onReceive() method.
+Generally, only a few foreground processes exist at any given time. They are killed only as a last resort—if memory is so low that they cannot all continue to run. Generally, at that point, the device has reached a memory paging state, so killing some foreground processes is required to keep the user interface responsive.
+
+**Visible process**
+A process that doesn't have any foreground components, but still can affect what the user sees on screen. A process is considered to be visible if either of the following conditions are true:
++ It hosts an Activity that is not in the foreground, but is still visible to the user (its onPause() method has been called). This might occur, for example, if the foreground activity started a dialog, which allows the previous activity to be seen behind it.
++ It hosts a Service that's bound to a visible (or foreground) activity.
+A visible process is considered extremely important and will not be killed unless doing so is required to keep all foreground processes running.
+Service process
+A process that is running a service that has been started with the startService() method and does not fall into either of the two higher categories. Although service processes are not directly tied to anything the user sees, they are generally doing things that the user cares about (such as playing music in the background or downloading data on the network), so the system keeps them running unless there's not enough memory to retain them along with all foreground and visible processes.
+
+**Background process**
+A process holding an activity that's not currently visible to the user (the activity's onStop() method has been called). These processes have no direct impact on the user experience, and the system can kill them at any time to reclaim memory for a foreground, visible, or service process. Usually there are many background processes running, so they are kept in an LRU (least recently used) list to ensure that the process with the activity that was most recently seen by the user is the last to be killed. If an activity implements its lifecycle methods correctly, and saves its current state, killing its process will not have a visible effect on the user experience, because when the user navigates back to the activity, the activity restores all of its visible state. See the Activities document for information about saving and restoring state.
+
+**Empty process**
+A process that doesn't hold any active application components. The only reason to keep this kind of process alive is for caching purposes, to improve startup time the next time a component needs to run in it. The system often kills these processes in order to balance overall system resources between process caches and the underlying kernel caches.
 
