@@ -462,3 +462,55 @@ A process holding an activity that's not currently visible to the user (the acti
 **Empty process**
 A process that doesn't hold any active application components. The only reason to keep this kind of process alive is for caching purposes, to improve startup time the next time a component needs to run in it. The system often kills these processes in order to balance overall system resources between process caches and the underlying kernel caches.
 
+***36. Can one process have different threads?***
+
+ *Answer:*
+ 
+When you start the system creates a thread of execution for the application, which is called the "main". The system does not create a separate thread for each instance of a component. All the components that are running in the same process, create instances in the UI thread, and system calls are sent to each component of this flow.There are only two rules for a single-threaded model Android:
++ Do not block the UI thread
++ Do not contact the toolbox Android user interface outside the UI thread
+
+Due to the single-threaded model for dynamic UI application it is very important not to block the UI thread. If you want to perform, takes some time to do them in separate threads ( "background" or "workers" flows).
+
+***37. In which thread application handles user's actions?***
+
+  *Answer:*
+
+Main thread (UI thread)
+
+***38. What is "ANR"?***
+
+ *Answer:*
+ 
+**ANR stands for Application Not Responding**: It is called when anything your application is doing in the UI thread that takes a long time to complete (5 sec approx)
+
+***39. Can you access the Android UI toolkit from outside the UI thread?***
+
+ *Answer:*
+ 
+Android offers several ways to access the UI thread from other threads:
++ Activity.runOnUiThread(Runnable)
++ View.post(Runnable)
++ View.postDelayed(Runnable, long)
++ To handle more complex interaction with the workflow, you can use the method in the **Handler** workflow for processing messages received from the UI thread.
++  Probably the best solution is to extend the class **AsyncTask**.
+
+***40. Please, name several ways to access the UI thread from other threads.***
+
+ *Answer:*
+ 
++ Activity.runOnUiThread(Runnable)
++ View.post(Runnable)
++ View.postDelayed(Runnable, long)
++ Handler
++ AsyncTask ( onPreExecute(), onPostExecute() and onProgressUpdate())
+
+***41. What steps do you know, that an asynchronous task is going through during the execution?***
+
+ *Answer:*
+ 
+***42. In which thread onPreExecute(), onPostExecute(), and onProgressUpdate() are called?***
+
+  *Answer:*
+  
+**onPreExecute Methods(), onPostExecute() and onProgressUpdate()** run on the UI thread.
